@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpException,
   NotFoundException,
   Param,
   Post,
@@ -220,8 +221,7 @@ export class AppController {
     }
 
     if (csrfToken !== session.csrfToken) {
-      res.status(422).send("invalid CSRF Token");
-      return;
+      throw new HttpException("invalid CSRF Token", 422);
     }
 
     if (file == null) {
@@ -252,8 +252,7 @@ export class AppController {
     const id = Number(idString);
     const post = await this.service.getPost(id);
     if (post == null) {
-      res.status(404).send("image not found");
-      return;
+      throw new HttpException("image not found", 404);
     }
     if (
       (ext === "jpg" && post.mime === "image/jpeg") ||
@@ -280,8 +279,7 @@ export class AppController {
     }
 
     if (csrfToken !== session.csrfToken) {
-      res.status(422).send("invalid CSRF Token");
-      return;
+      throw new HttpException("invalid CSRF Token", 422);
     }
 
     if (!/^[0-9]+$/.test(postIdString)) {
@@ -306,8 +304,7 @@ export class AppController {
     }
 
     if (!me.authority) {
-      res.status(403).send("authority is required");
-      return { me, users: [] };
+      throw new HttpException("authority is required", 403);
     }
 
     const bannedUsers = await this.service.getBannedUsers();
@@ -330,19 +327,16 @@ export class AppController {
     }
 
     if (!me.authority) {
-      res.status(403).send("authority is required");
-      return;
+      throw new HttpException("authority is required", 403);
     }
 
     if (csrfToken !== session.csrfToken) {
-      res.status(422).send("invalid CSRF Token");
-      return;
+      throw new HttpException("invalid CSRF Token", 422);
     }
 
     const user = await this.service.getUserByAccountName(accountName);
     if (user == null) {
-      res.status(404).send("user not found");
-      return;
+      throw new HttpException("user not found", 404);
     }
 
     await Promise.all(
