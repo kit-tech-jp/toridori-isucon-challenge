@@ -1,3 +1,8 @@
+DB_PORT ?= 33306
+DB_HOST ?= host.docker.internal
+DB_USER ?= user
+DB_PASSWORD ?= password
+
 .PHONY: init
 
 init: data/dump.sql.bz2 benchmarker/userdata/img
@@ -6,7 +11,7 @@ up:
 	docker compose up -d
 
 load-initial-data:
-	bunzip2 -c data/dump.sql.bz2 | mysql -uroot -ppassword -h127.0.0.1 -P33306 isuconp
+	bunzip2 -c data/dump.sql.bz2 | mysql -u$(DB_USER) -p$(DB_PASSWORD) -h$(DB_HOST) -P$(DB_PORT) isuconp
 
 data/dump.sql.bz2:
 	cd data && \

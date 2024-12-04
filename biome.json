@@ -4,7 +4,14 @@
     "enabled": true
   },
   "files": {
-    "ignore": ["github/**", "idea/**", "vscode/**", "bin/**", "public/**"]
+    "ignore": [
+      "github/**",
+      "idea/**",
+      "vscode/**",
+      "bin/**",
+      "public/**",
+      "benchmarker/**"
+    ]
   },
   "linter": {
     "enabled": true,

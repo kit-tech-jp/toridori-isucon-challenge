@@ -2,7 +2,8 @@ import eslint from "@eslint/js";
 import tseslint from "typescript-eslint";
 
 const ignoreTargetConfig = {
-  ignores: ["dist/", ".turbo/", "*.mjs", "public/"], // ESLint のチェック対象外 (node_modules と .git はデフォルトで対象外)
+  // ESLint のチェック対象外 (node_modules と .git はデフォルトで対象外)
+  ignores: ["dist/", ".turbo/", "*.mjs", "public/", "benchmarker/**"],
 };
 
 // strict と stylistic に含まれないルールを追加する
