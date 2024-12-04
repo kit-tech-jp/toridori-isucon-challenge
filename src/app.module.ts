@@ -1,4 +1,5 @@
-import { Module } from "@nestjs/common";
+import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
+import { LoggerMiddleware } from "./acess-log";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { PrismaModule } from "./db/prisma.module";
@@ -8,5 +9,8 @@ import { PrismaModule } from "./db/prisma.module";
   controllers: [AppController],
   providers: [AppService],
 })
-// eslint-disable-next-line @typescript-eslint/no-extraneous-class
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(LoggerMiddleware).forRoutes("*");
+  }
+}
