@@ -5,10 +5,13 @@ DB_PASSWORD ?= password
 
 .PHONY: init
 
-init: data/dump.sql.bz2 benchmarker/userdata/img
+init: init-env data/dump.sql.bz2 benchmarker/userdata/img
 
 up:
 	docker compose up -d
+
+init-env:
+	cp .env.example .env
 
 load-initial-data:
 	bunzip2 -c data/dump.sql.bz2 | mysql -u$(DB_USER) -p$(DB_PASSWORD) -h$(DB_HOST) -P$(DB_PORT) isuconp

@@ -36,3 +36,5 @@ yarn-error.log*
 # Data
 data/*
 !data/.gitkeep
+
+.env
