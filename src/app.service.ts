@@ -117,27 +117,26 @@ export class AppService {
     post: Post,
     options: { allComments: boolean },
   ): Promise<PostExt> {
-    const commentCount = await this.prisma.comment.count({
-      where: { post_id: post.id },
-    });
-
-    const comments = await this.prisma.comment.findMany({
-      where: { post_id: post.id },
-      orderBy: { created_at: "desc" },
-      take: options.allComments ? undefined : 3,
-    });
-
-    const commentExts = await Promise.all(
-      comments.map(async (comment) => {
-        return await this.makeCommentExt(comment);
+    const [commentCount, commentExts, postUser] = await Promise.all([
+      this.prisma.comment.count({
+        where: { post_id: post.id },
       }),
-    );
 
-    const postUser = await this.getUser(post.user_id);
-    if (postUser == null) {
-      throw new Error("ユーザーが見つかりません");
-    }
+      this.prisma.comment.findMany({
+        where: { post_id: post.id },
+        orderBy: { created_at: "desc" },
+        take: options.allComments ? undefined : 3,
+      }).then(comments => 
+        Promise.all(comments.map(comment => this.makeCommentExt(comment)))
+       ),
 
+       this.getUser(post.user_id).then(user => {
+         if (user == null) {
+           throw new Error("ユーザーが見つかりません");
+         }
+         return user;
+       })
+    ]);
     return {
       ...post,
       commentCount,
@@ -170,7 +169,7 @@ export class AppService {
     return posts.filter((post) => !post.user.del_flg).slice(0, postPerPage);
   }
 
-  async getPosts(before?: Date): Promise<Post[]> {
+  async getPosts(POSTS_PER_PAGE?: number, before?: Date): Promise<Post[]> {
     let cursor = 0;
     const posts = [];
     let hasMorePosts = true;
@@ -180,7 +179,7 @@ export class AppService {
           created_at: before != null ? { lte: before } : undefined,
         },
         // workaround for https://github.com/prisma/prisma/issues/13864
-        take: 1000,
+        take: POSTS_PER_PAGE,
         skip: cursor,
         orderBy: { created_at: "desc" },
       });
