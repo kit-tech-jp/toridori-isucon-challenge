@@ -170,25 +170,30 @@ export class AppService {
     return posts.filter((post) => !post.user.del_flg).slice(0, postPerPage);
   }
 
-  async getPosts(before?: Date): Promise<Post[]> {
+  async getPosts({
+    before,
+    count,
+  }: {
+    before?: Date;
+    count: number;
+  }): Promise<Post[]> {
     let cursor = 0;
-    const posts = [];
-    let hasMorePosts = true;
-    while (hasMorePosts) {
-      const batch = await this.prisma.post.findMany({
-        where: {
-          created_at: before != null ? { lte: before } : undefined,
-        },
-        // workaround for https://github.com/prisma/prisma/issues/13864
-        take: 1000,
-        skip: cursor,
-        orderBy: { created_at: "desc" },
-      });
-      posts.push(...batch);
-      cursor += batch.length;
-      // hasMorePosts = batch.length === 1000;
-      hasMorePosts = false;
-    }
+    const posts = await this.prisma.post.findMany({
+      where: {
+        created_at: before != null ? { lte: before } : undefined,
+        user: {
+          del_flg: {
+            not: {
+              equals: false,
+            },
+          }
+        }
+      },
+      // workaround for https://github.com/prisma/prisma/issues/13864
+      take: count,
+      skip: cursor,
+      orderBy: { created_at: "desc" },
+    });
     return posts;
   }
 

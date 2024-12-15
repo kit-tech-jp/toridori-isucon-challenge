@@ -165,10 +165,10 @@ export class AppController {
     @Req() req: Request,
   ): Promise<object> {
     const me = await this.service.getSessionUser(session);
-    const posts = await this.service.getPosts();
+    const posts = await this.service.getPosts({ count: POSTS_PER_PAGE });
     const postExts = await this.service.makePostExts(posts);
-    const filteredPosts = this.service.filterPosts(postExts, POSTS_PER_PAGE);
-    return { me, imageUrl, posts: filteredPosts, messages: req.flash() };
+    // const filteredPosts = this.service.filterPosts(postExts, POSTS_PER_PAGE);
+    return { me, imageUrl, posts: postExts, messages: req.flash() };
   }
 
   @Get("/posts")
@@ -182,10 +182,10 @@ export class AppController {
       maxCreatedAt = new Date();
     }
     const me = await this.service.getSessionUser(session);
-    const posts = await this.service.getPosts(maxCreatedAt);
+    const posts = await this.service.getPosts({ before: maxCreatedAt, count: POSTS_PER_PAGE });
     const postExts = await this.service.makePostExts(posts);
-    const filteredPosts = this.service.filterPosts(postExts, POSTS_PER_PAGE);
-    return { me, imageUrl, posts: filteredPosts };
+    // const filteredPosts = this.service.filterPosts(postExts, POSTS_PER_PAGE);
+    return { me, imageUrl, posts: postExts };
   }
 
   @Get("/posts/:id")
