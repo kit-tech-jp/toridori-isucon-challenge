@@ -105,12 +105,11 @@ export class AppService {
     });
   }
 
-  async makeCommentExt(comment: Comment): Promise<CommentExt> {
-    const user = await this.getUser(comment.user_id);
-    if (user == null) {
+  makeCommentExt(comments: CommentExt[]): CommentExt[] {
+    if (comments.length === 0) {
       throw new Error("ユーザーが見つかりません");
     }
-    return { ...comment, user };
+    return comments;
   }
 
   async makePostExt(
@@ -125,13 +124,12 @@ export class AppService {
       where: { post_id: post.id },
       orderBy: { created_at: "desc" },
       take: options.allComments ? undefined : 3,
+      include: {
+        user: true,
+      },
     });
 
-    const commentExts = await Promise.all(
-      comments.map(async (comment) => {
-        return await this.makeCommentExt(comment);
-      }),
-    );
+    const commentExts = this.makeCommentExt(comments);
 
     const postUser = await this.getUser(post.user_id);
     if (postUser == null) {
