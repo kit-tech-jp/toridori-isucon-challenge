@@ -82,13 +82,13 @@ export class AppService {
   }
 
   async registerUser(account_name: string, password: string): Promise<User> {
-    const user = await this.prisma.user.findFirst({
-      where: { account_name },
-    });
-
     if (!this.validateUser(account_name, password)) {
       throw new Error("アカウント名は3文字以上、20文字以下です");
     }
+
+    const user = await this.prisma.user.findFirst({
+      where: { account_name },
+    });
 
     if (user != null) {
       throw new Error("このアカウント名は既に使われています");
@@ -117,6 +117,11 @@ export class AppService {
     post: Post,
     options: { allComments: boolean },
   ): Promise<PostExt> {
+    const postUser = await this.getUser(post.user_id);
+    if (postUser == null) {
+      throw new Error("ユーザーが見つかりません");
+    }
+    
     const commentCount = await this.prisma.comment.count({
       where: { post_id: post.id },
     });
@@ -132,11 +137,6 @@ export class AppService {
         return await this.makeCommentExt(comment);
       }),
     );
-
-    const postUser = await this.getUser(post.user_id);
-    if (postUser == null) {
-      throw new Error("ユーザーが見つかりません");
-    }
 
     return {
       ...post,
