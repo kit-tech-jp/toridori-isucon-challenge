@@ -125,13 +125,34 @@ export class AppService {
       where: { post_id: post.id },
       orderBy: { created_at: "desc" },
       take: options.allComments ? undefined : 3,
+      include: { user: true },
     });
 
+    // const commentExts = [];
+    // for (const comment of comments) {
+    //   const user = comment.user;
+    //   if (user == null) {
+    //     throw new Error("ユーザーが見つかりません");
+    //   }
+    //   commentExts.append({ ...comment, user });
+    // }
+
     const commentExts = await Promise.all(
-      comments.map(async (comment) => {
-        return await this.makeCommentExt(comment);
+      comments.map((comment) => {
+        const user = comment.user;
+        // user が null になることはない？？
+        // if (user == null) {
+        //   throw new Error("ユーザーが見つかりません");
+        // }
+        return { ...comment, user };
       }),
     );
+
+    // const commentExts = await Promise.all(
+    //   comments.map(async (comment) => {
+    //     return await this.makeCommentExt(comment);
+    //   }),
+    // );
 
     const postUser = await this.getUser(post.user_id);
     if (postUser == null) {
@@ -177,6 +198,7 @@ export class AppService {
     before?: Date;
     count: number;
   }): Promise<Post[]> {
+    const cursor = 0;
     const posts = await this.prisma.post.findMany({
       where: {
         created_at: before != null ? { lte: before } : undefined,
@@ -190,6 +212,7 @@ export class AppService {
       },
       // workaround for https://github.com/prisma/prisma/issues/13864
       take: count,
+      skip: cursor,
       orderBy: { created_at: "desc" },
     });
     return posts;
