@@ -126,17 +126,12 @@ export class AppService {
       where: { post_id: post.id },
     });
 
-    const comments = await this.prisma.comment.findMany({
+    const commentExts = await this.prisma.comment.findMany({
       where: { post_id: post.id },
       orderBy: { created_at: "desc" },
       take: options.allComments ? undefined : 3,
+      include: { user: true },
     });
-
-    const commentExts = await Promise.all(
-      comments.map(async (comment) => {
-        return await this.makeCommentExt(comment);
-      }),
-    );
 
     return {
       ...post,
