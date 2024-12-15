@@ -182,7 +182,10 @@ export class AppController {
       maxCreatedAt = new Date();
     }
     const me = await this.service.getSessionUser(session);
-    const posts = await this.service.getPosts({ before: maxCreatedAt, count: POSTS_PER_PAGE });
+    const posts = await this.service.getPosts({
+      before: maxCreatedAt,
+      count: POSTS_PER_PAGE,
+    });
     const postExts = await this.service.makePostExts(posts);
     // const filteredPosts = this.service.filterPosts(postExts, POSTS_PER_PAGE);
     return { me, imageUrl, posts: postExts };
