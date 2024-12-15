@@ -177,7 +177,6 @@ export class AppService {
     before?: Date;
     count: number;
   }): Promise<Post[]> {
-    let cursor = 0;
     const posts = await this.prisma.post.findMany({
       where: {
         created_at: before != null ? { lte: before } : undefined,
@@ -186,12 +185,11 @@ export class AppService {
             not: {
               equals: false,
             },
-          }
-        }
+          },
+        },
       },
       // workaround for https://github.com/prisma/prisma/issues/13864
       take: count,
-      skip: cursor,
       orderBy: { created_at: "desc" },
     });
     return posts;
