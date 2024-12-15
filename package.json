@@ -9,7 +9,7 @@
   "scripts": {
     "build": "nest build",
     "dev": "nest start --watch",
-    "dev:debug": "nest start --debug --watch",
+    "dev:debug": "DB_URL=mysql://root:password@127.0.0.1:33306/isuconp?pool_timeout=0 nest start --debug --watch",
     "lint": "biome lint .",
     "lint:eslint": "eslint .",
     "format": "biome format .",
