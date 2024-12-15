@@ -230,7 +230,7 @@ export class AppService {
       return 0;
     }
     return await this.prisma.comment.count({
-      where: { user_id: { in: postIds } },
+      where: { post_id: { in: postIds } },
     });
   }
 
