@@ -23,6 +23,7 @@ model User {
   Post         Post[]
   Comment      Comment[]
 
+  @@index([account_name], name: "account_name")
   @@map("users")
 }
 
