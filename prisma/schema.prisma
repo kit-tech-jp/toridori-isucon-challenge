@@ -23,6 +23,7 @@ model User {
   Post         Post[]
   Comment      Comment[]
 
+  @@index([account_name])
   @@map("users")
 }
 
@@ -37,6 +38,7 @@ model Post {
   user    User      @relation(fields: [user_id], references: [id])
   Comment Comment[]
 
+  @@index([user_id])
   @@map("posts")
 }
 
@@ -50,5 +52,6 @@ model Comment {
   post Post @relation(fields: [post_id], references: [id])
   user User @relation(fields: [user_id], references: [id])
 
+  @@index([post_id])
   @@map("comments")
 }
