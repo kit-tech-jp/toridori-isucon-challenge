@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { Comment, Post, User } from "@prisma/client";
 import { PrismaService } from "./db/prisma.service";
-import { CommentExt, PostExt, ReqSession, SessionUser } from "./types";
+import { PostExt, ReqSession, SessionUser } from "./types";
 
 const UPLOAD_LIMIT = 10 * 1024 * 1024; // 10mb
 
@@ -121,7 +121,7 @@ export class AppService {
     });
 
     const commentExts = await Promise.all(
-      comments.map(async (comment) => {
+      comments.map((comment) => {
         return { ...comment, user: comment.user };
       }),
     );
@@ -173,7 +173,7 @@ export class AppService {
           created_at: before != null ? { lte: before } : undefined,
           user: {
             del_flg: {
-              equals: false
+              equals: false,
             },
           },
         },
