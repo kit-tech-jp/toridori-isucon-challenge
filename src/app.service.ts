@@ -222,15 +222,8 @@ export class AppService {
   }
 
   async getCommentedCountByUser(user: User): Promise<number> {
-    const posts = await this.prisma.post.findMany({
-      where: { user_id: user.id },
-    });
-    const postIds = posts.map((post) => post.id);
-    if (postIds.length === 0) {
-      return 0;
-    }
     return await this.prisma.comment.count({
-      where: { post_id: { in: postIds } },
+      where: { post: { user_id: user.id } },
     });
   }
 
