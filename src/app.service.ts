@@ -121,7 +121,7 @@ export class AppService {
     if (postUser == null) {
       throw new Error("ユーザーが見つかりません");
     }
-    
+
     const commentCount = await this.prisma.comment.count({
       where: { post_id: post.id },
     });
