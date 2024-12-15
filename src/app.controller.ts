@@ -164,8 +164,10 @@ export class AppController {
     @Session() session: ReqSession,
     @Req() req: Request,
   ): Promise<object> {
-    const me = await this.service.getSessionUser(session);
-    const posts = await this.service.getPosts({ count: POSTS_PER_PAGE });
+    const [me, posts] = await Promise.all([
+      this.service.getSessionUser(session),
+      this.service.getPosts({ count: POSTS_PER_PAGE }),
+    ]);
     const postExts = await this.service.makePostExts(posts);
     // const filteredPosts = this.service.filterPosts(postExts, POSTS_PER_PAGE);
     return { me, imageUrl, posts: postExts, messages: req.flash() };
