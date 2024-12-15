@@ -24,6 +24,8 @@ model User {
   Comment      Comment[]
 
   @@index([del_flg])
+  @@index([account_name], name: "account_name")
+
   @@map("users")
 }
 

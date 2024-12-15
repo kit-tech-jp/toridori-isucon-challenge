@@ -180,7 +180,7 @@ export class AppService {
           created_at: before != null ? { lte: before } : undefined,
         },
         // workaround for https://github.com/prisma/prisma/issues/13864
-        take: 100,
+        take: 20,
         skip: cursor,
         orderBy: { created_at: "desc" },
       });
@@ -206,12 +206,6 @@ export class AppService {
     return await this.prisma.post.findMany({
       where: { user_id: user.id },
       orderBy: { created_at: "desc" },
-    });
-  }
-
-  async getPostCountByUser(user: User): Promise<number> {
-    return await this.prisma.post.count({
-      where: { user_id: user.id },
     });
   }
 

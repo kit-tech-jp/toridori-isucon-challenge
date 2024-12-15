@@ -141,17 +141,27 @@ export class AppController {
     if (user == null) {
       throw new NotFoundException("Not Found");
     }
-    const posts = await this.service.getPostsByUser(user);
-    const postCount = await this.service.getPostCountByUser(user);
-    const postExts = await this.service.makePostExts(posts);
-    const filteredPosts = this.service.filterPosts(postExts, POSTS_PER_PAGE);
-    const commentCount = await this.service.getCommentCountByUser(user);
-    const commentedCount = await this.service.getCommentedCountByUser(user);
+
+    const [postsAsync, commentCount, commentedCount] = await Promise.all([
+      async () => {
+        const posts = await this.service.getPostsByUser(user);
+        const postExts = await this.service.makePostExts(posts);
+        const filteredPosts = this.service.filterPosts(
+          postExts,
+          POSTS_PER_PAGE,
+        );
+        return { posts, filteredPosts };
+      },
+      this.service.getCommentCountByUser(user),
+      this.service.getCommentedCountByUser(user),
+    ]);
+
+    const res = await postsAsync();
     return {
       me,
       user,
-      posts: filteredPosts,
-      post_count: postCount,
+      posts: res.filteredPosts,
+      post_count: res.posts.length,
       comment_count: commentCount,
       commented_count: commentedCount,
       imageUrl,
