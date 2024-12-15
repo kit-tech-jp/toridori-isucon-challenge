@@ -121,38 +121,12 @@ export class AppService {
       where: { post_id: post.id },
     });
 
-    const comments = await this.prisma.comment.findMany({
+    const commentExts = await this.prisma.comment.findMany({
       where: { post_id: post.id },
       orderBy: { created_at: "desc" },
       take: options.allComments ? undefined : 3,
       include: { user: true },
     });
-
-    // const commentExts = [];
-    // for (const comment of comments) {
-    //   const user = comment.user;
-    //   if (user == null) {
-    //     throw new Error("ユーザーが見つかりません");
-    //   }
-    //   commentExts.append({ ...comment, user });
-    // }
-
-    const commentExts = await Promise.all(
-      comments.map((comment) => {
-        const user = comment.user;
-        // user が null になることはない？？
-        // if (user == null) {
-        //   throw new Error("ユーザーが見つかりません");
-        // }
-        return { ...comment, user };
-      }),
-    );
-
-    // const commentExts = await Promise.all(
-    //   comments.map(async (comment) => {
-    //     return await this.makeCommentExt(comment);
-    //   }),
-    // );
 
     const postUser = await this.getUser(post.user_id);
     if (postUser == null) {
