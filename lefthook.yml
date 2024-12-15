@@ -7,4 +7,4 @@ pre-push:
   commands:
     biome:
       glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}"
-      run: pnpm run check
+      run: ["pnpm run format", "pnpm run lint", "pnpm run lint:eslint"]
