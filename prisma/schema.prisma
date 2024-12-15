@@ -24,6 +24,8 @@ model User {
   Comment      Comment[]
 
   @@map("users")
+  @@index([id])
+  @@index([del_flg])
 }
 
 model Post {
@@ -38,6 +40,9 @@ model Post {
   Comment Comment[]
 
   @@map("posts")
+  @@index([id])
+  @@index([user_id])
+  @@index([created_at(sort: Desc)])
 }
 
 model Comment {
@@ -51,4 +56,7 @@ model Comment {
   user User @relation(fields: [user_id], references: [id])
 
   @@map("comments")
+  @@index([post_id])
+  @@index([user_id])
+  @@index([created_at(sort: Desc)])
 }
