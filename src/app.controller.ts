@@ -183,11 +183,12 @@ export class AppController {
     if (maxCreatedAt.toString() === "Invalid Date") {
       maxCreatedAt = new Date();
     }
-    const me = await this.service.getSessionUser(session);
-    const posts = await this.service.getPosts({
-      before: maxCreatedAt,
-      count: POSTS_PER_PAGE,
-    });
+
+    const [me, posts] = await Promise.all([
+      this.service.getSessionUser(session),
+      this.service.getPosts({ before: maxCreatedAt, count: POSTS_PER_PAGE }),
+    ]);
+
     const postExts = await this.service.makePostExts(posts);
     // const filteredPosts = this.service.filterPosts(postExts, POSTS_PER_PAGE);
     return { me, imageUrl, posts: postExts };
