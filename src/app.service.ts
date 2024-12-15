@@ -180,7 +180,7 @@ export class AppService {
           created_at: before != null ? { lte: before } : undefined,
         },
         // workaround for https://github.com/prisma/prisma/issues/13864
-        take: 10,
+        take: 100,
         skip: cursor,
         orderBy: { created_at: "desc" },
       });
