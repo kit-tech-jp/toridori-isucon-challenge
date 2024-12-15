@@ -122,16 +122,17 @@ export class AppService {
       throw new Error("ユーザーが見つかりません");
     }
 
-    const commentCount = await this.prisma.comment.count({
-      where: { post_id: post.id },
-    });
-
-    const commentExts = await this.prisma.comment.findMany({
-      where: { post_id: post.id },
-      orderBy: { created_at: "desc" },
-      take: options.allComments ? undefined : 3,
-      include: { user: true },
-    });
+    const [commentCount, commentExts] = await Promise.all([
+      this.prisma.comment.count({
+        where: { post_id: post.id },
+      }),
+      this.prisma.comment.findMany({
+        where: { post_id: post.id },
+        orderBy: { created_at: "desc" },
+        take: options.allComments ? undefined : 3,
+        include: { user: true },
+      }),
+    ]);
 
     return {
       ...post,
