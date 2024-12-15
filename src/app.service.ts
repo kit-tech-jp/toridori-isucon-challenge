@@ -178,6 +178,11 @@ export class AppService {
       const batch = await this.prisma.post.findMany({
         where: {
           created_at: before != null ? { lte: before } : undefined,
+          user: {
+            del_flg: {
+              equals: false
+            },
+          },
         },
         // workaround for https://github.com/prisma/prisma/issues/13864
         take: 20,
