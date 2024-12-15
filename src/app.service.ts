@@ -209,12 +209,6 @@ export class AppService {
     });
   }
 
-  async getPostCountByUser(user: User): Promise<number> {
-    return await this.prisma.post.count({
-      where: { user_id: user.id },
-    });
-  }
-
   async getCommentCountByUser(user: User): Promise<number> {
     return await this.prisma.comment.count({
       where: { user_id: user.id },
