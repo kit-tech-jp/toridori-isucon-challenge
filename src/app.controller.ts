@@ -200,9 +200,11 @@ export class AppController {
     @Param("id") postIdString: string,
     @Session() session: ReqSession,
   ): Promise<object> {
-    const me = await this.service.getSessionUser(session);
     const postId = Number(postIdString);
-    const post = await this.service.getPost(postId);
+    const [me, post] = await Promise.all([
+      this.service.getSessionUser(session),
+      this.service.getPost(postId),
+    ]);
     if (post == null) {
       throw new NotFoundException("Not Found");
     }
