@@ -142,7 +142,7 @@ export class AppController {
       throw new NotFoundException("Not Found");
     }
     const posts = await this.service.getPostsByUser(user);
-    const postCount = await this.service.getPostCountByUser(user);
+    const postCount = posts.length;
     const postExts = await this.service.makePostExts(posts);
     const filteredPosts = this.service.filterPosts(postExts, POSTS_PER_PAGE);
     const commentCount = await this.service.getCommentCountByUser(user);
